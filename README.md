@@ -15,3 +15,7 @@
 - [CSV file sample](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1105317/ghg-conversion-factors-2022-flat-format.xls)
 
 - [Node-red reads spreadsheet files](https://flows.nodered.org/node/node-red-contrib-spreadsheet-in)
+
+# Data Visualization worklfow
+
+![](./img/data%20vis%20flow.png)
