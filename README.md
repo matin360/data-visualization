@@ -1,6 +1,6 @@
 # data-visualization
 
-# Docs
+## Docs
 
 - [Grafana docs](https://grafana.com/docs/)
 
@@ -8,7 +8,7 @@
 
 - [InfluxDB docs](https://docs.influxdata.com/)
 
-# Useful resources
+## Useful resources
 
 - [Youtube resources](https://youtube.com/playlist?list=PLviskRVPQfMUkYqUomQZiT95qjk7a5Wf1)
 
@@ -16,6 +16,6 @@
 
 - [Node-red reads spreadsheet files](https://flows.nodered.org/node/node-red-contrib-spreadsheet-in)
 
-# Data Visualization worklfow
+## Data Visualization worklfow
 
 ![](./img/data%20vis%20flow.png)
