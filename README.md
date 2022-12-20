@@ -19,3 +19,8 @@
 ## Data Visualization worklfow
 
 ![](./img/data%20vis%20flow.png)
+
+### Node-red flow
+- Read data from a spreadsheet and convert cells into a json file
+
+![](./img/node-red-flow.png)
