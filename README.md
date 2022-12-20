@@ -21,6 +21,9 @@
 ![](./img/data%20vis%20flow.png)
 
 ### Node-red flow
-- Read data from a spreadsheet and convert cells into a json file
-
+#### Read data from a spreadsheet and convert cells into a json file
+- run node-red
+- import the given flow
+- deploy it
+- call api localhoat:[port]/data
 ![](./img/node-red-flow.png)
