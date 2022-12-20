@@ -25,5 +25,6 @@
 - run node-red
 - import the given [flow](./flows/flow1.json)
 - deploy it
+- download [spreadsheet](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1105317/ghg-conversion-factors-2022-flat-format.xls) and specify the path of this file in the flow (file node)
 - call api localhoat:[port]/data
 ![](./img/node-red-flow.png)
