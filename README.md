@@ -23,7 +23,7 @@
 ### Node-red flow
 #### Read data from a spreadsheet and convert cells into a json file
 - run node-red
-- import the given flow
+- import the given [flow](./flows/flow1.json)
 - deploy it
 - call api localhoat:[port]/data
 ![](./img/node-red-flow.png)

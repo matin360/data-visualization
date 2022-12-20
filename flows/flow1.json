@@ -1,0 +1,119 @@
+[
+    {
+        "id": "1ef482ff.54be1d",
+        "type": "file in",
+        "z": "029d65771b8e506c",
+        "name": "read a spreadsheet file as binary buffer",
+        "filename": "C:\\Users\\manafov\\Desktop\\ghg-conversion-factors-2022-flat-format.xls",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "allProps": false,
+        "x": 440,
+        "y": 140,
+        "wires": [
+            [
+                "58da0822.79c4a8"
+            ]
+        ]
+    },
+    {
+        "id": "58da0822.79c4a8",
+        "type": "book",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "8bd99783.125c38",
+                "ed8b8fb2.0d17c"
+            ]
+        ]
+    },
+    {
+        "id": "ed8b8fb2.0d17c",
+        "type": "sheet",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "sheetName": "Factors by Category",
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "9c0ed110.bc235"
+            ]
+        ]
+    },
+    {
+        "id": "9c0ed110.bc235",
+        "type": "sheet-to-json",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "raw": "true",
+        "range": "A5:I8042",
+        "header": "default",
+        "blankrows": false,
+        "x": 520,
+        "y": 380,
+        "wires": [
+            [
+                "4c28547e.6d566c",
+                "94a01672de0fa061"
+            ]
+        ]
+    },
+    {
+        "id": "8bd99783.125c38",
+        "type": "debug",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload.SheetNames",
+        "x": 670,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4c28547e.6d566c",
+        "type": "debug",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 720,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "1109a28a54235f29",
+        "type": "http in",
+        "z": "029d65771b8e506c",
+        "name": "",
+        "url": "/data",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "1ef482ff.54be1d"
+            ]
+        ]
+    },
+    {
+        "id": "94a01672de0fa061",
+        "type": "http response",
+        "z": "029d65771b8e506c",
+        "name": "response",
+        "statusCode": "",
+        "headers": {},
+        "x": 700,
+        "y": 500,
+        "wires": []
+    }
+]
