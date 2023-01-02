@@ -1,0 +1,230 @@
+[
+    {
+        "id": "c4cff820f477764c",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "6d60fc7930bb86db",
+        "type": "file in",
+        "z": "c4cff820f477764c",
+        "name": "read a spreadsheet file as binary buffer",
+        "filename": "/ghg-conversion-factors-2022-flat-format.xls",
+        "filenameType": "str",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "allProps": false,
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "55e383bf6dcbdd63"
+            ]
+        ]
+    },
+    {
+        "id": "0de6402d46cfacc0",
+        "type": "debug",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "payload.SheetNames",
+        "x": 580,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "d4efd50da3034ace",
+        "type": "debug",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 230,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "63ddd0ad21db2efb",
+        "type": "http in",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "url": "/data",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            [
+                "6d60fc7930bb86db"
+            ]
+        ]
+    },
+    {
+        "id": "ea8bdc7684797f13",
+        "type": "http response",
+        "z": "c4cff820f477764c",
+        "name": "response",
+        "statusCode": "",
+        "headers": {},
+        "x": 240,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "aea1b8896a3b4683",
+        "type": "function",
+        "z": "c4cff820f477764c",
+        "name": "++",
+        "func": "if ((msg.i += 1) < msg.items.length) return msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 540,
+        "wires": [
+            [
+                "9fc8880fbaef2602"
+            ]
+        ]
+    },
+    {
+        "id": "9fc8880fbaef2602",
+        "type": "function",
+        "z": "c4cff820f477764c",
+        "name": "for each item",
+        "func": "if( msg.i     == undefined ) msg.i = 0;\nif( msg.items == undefined ) msg.items = msg.payload;\n\nmsg.payload = msg.items[ msg.i ];\n\nmsg.index = msg.i\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 492,
+        "y": 452,
+        "wires": [
+            [
+                "aea1b8896a3b4683",
+                "cad2523511977649"
+            ]
+        ]
+    },
+    {
+        "id": "55e383bf6dcbdd63",
+        "type": "book",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "x": 250,
+        "y": 280,
+        "wires": [
+            [
+                "0de6402d46cfacc0",
+                "ec0d02d3349ccde9"
+            ]
+        ]
+    },
+    {
+        "id": "ec0d02d3349ccde9",
+        "type": "sheet",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "sheetName": "Factors by Category",
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "55f64b14063fc432"
+            ]
+        ]
+    },
+    {
+        "id": "55f64b14063fc432",
+        "type": "sheet-to-json",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "raw": "true",
+        "range": "I5:I8042",
+        "header": "default",
+        "blankrows": false,
+        "x": 210,
+        "y": 460,
+        "wires": [
+            [
+                "d4efd50da3034ace",
+                "ea8bdc7684797f13",
+                "9fc8880fbaef2602"
+            ]
+        ]
+    },
+    {
+        "id": "400d69c805a9cf7f",
+        "type": "influxdb out",
+        "z": "c4cff820f477764c",
+        "influxdb": "6d9d5486843416a5",
+        "name": "",
+        "measurement": "convesrion",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "TalTech",
+        "bucket": "test",
+        "x": 870,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "cad2523511977649",
+        "type": "function",
+        "z": "c4cff820f477764c",
+        "name": "extractor",
+        "func": "\nmsg.payload = msg.payload[\"GHG Conversion Factor 2022\"];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 400,
+        "wires": [
+            [
+                "400d69c805a9cf7f",
+                "3a8e7976fe186f76"
+            ]
+        ]
+    },
+    {
+        "id": "3a8e7976fe186f76",
+        "type": "debug",
+        "z": "c4cff820f477764c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 890,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "6d9d5486843416a5",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "database",
+        "name": "influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://nig-stack_influxdb_1:8086",
+        "rejectUnauthorized": true
+    }
+]

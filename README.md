@@ -1,5 +1,5 @@
 # data-visualization
-
+- refer to [instructions](https://github.com/Onunda/nig-stack) to set stack in docker
 ## Docs
 
 - [Grafana docs](https://grafana.com/docs/)
@@ -25,6 +25,10 @@
 - run node-red
 - import the given [flow](./flows/flow1.json)
 - deploy it
-- download [spreadsheet](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1105317/ghg-conversion-factors-2022-flat-format.xls) and specify the path of this file in the flow (file node)
+- download [spreadsheet](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1105317/ghg-conversion-factors-2022-flat-format.xls) and specify the path of this file in the flow (file node), you may copy this file to container if you are using docker
 - call api localhoat:[port]/data
 ![](./img/node-red-flow.png)
+#### Read data from a spreadsheet and send each value one by one to influx
+- same steps as mentioned above
+- import the given [flow](./flows/flow2.json)
+![](./img/node-red-flow2.png)
