@@ -22,6 +22,7 @@
 
 ### Node-red flow
 #### Read data from a spreadsheet and convert cells into a json file
+- add pallete `node-red-contrib-spreadsheet-in`
 - run node-red
 - import the given [flow](./flows/flow1.json)
 - deploy it
@@ -30,6 +31,7 @@
 ![](./img/node-red-flow.png)
 #### Read data from a spreadsheet and send each value one by one to influx
 - same steps as mentioned above
+- add pallete `node-red-contrib-influxdb`
 - setup influx first
 - create bucket in influxDB and connect it to your influx node
 - import the given [flow](./flows/flow2.json)
