@@ -17,7 +17,7 @@ export default function App() {
     formData.append("myFile", file);
 
     console.log(file);
-    axios.post("http://localhost:3000/api/uploadfile", formData, {
+    axios.post("http://localhost:3001/api/uploadfile", formData, {
       headers: {
         "content-type": "multipart/form-data",
         "Access-Control-Allow-Origin": "*"

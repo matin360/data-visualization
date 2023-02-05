@@ -29,4 +29,4 @@ app.post("/api/uploadfile", upload.single('myFile'), (req, res, next) => {
     res.sendStatus(200);
 });
 
-app.listen(3001, () => console.log("Listening on port 3000"));
+app.listen(3001, () => console.log("Listening on port 3001"));
