@@ -25,8 +25,8 @@ app.use(express.static(__dirname + "/../uploads"));
 
 // route for file upload
 app.post("/api/uploadfile", upload.single('myFile'), (req, res, next) => {
-    console.log(req.file.originalname + " file successfully uploaded !!");
+    alert(req.file.originalname + " file successfully uploaded !!");
     res.sendStatus(200);
 });
 
-app.listen(3000, () => console.log("Listening on port 3000"));
+app.listen(3001, () => console.log("Listening on port 3000"));
