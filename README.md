@@ -36,3 +36,11 @@
 - create bucket in influxDB and connect it to your influx node
 - import the given [flow](./flows/flow2.json)
 ![](./img/node-red-flow2.png)
+
+#### File Uploader (uploads into local folder)
+
+- `cd uploadApp`
+- make sure you have nodejs installed as well as npm/yarn
+- `yarn install`
+- `yarn start` to build the project and run the node server
+- `yarn dev` (2nd terminal) to run the frontend
