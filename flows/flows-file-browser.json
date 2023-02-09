@@ -1,0 +1,1089 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "4fa73dd9.83cca4",
+        "type": "comment",
+        "z": "f6f2187d.f17ca8",
+        "name": "File Browser",
+        "info": "1) Update the default folder in the Init node\n2) Update the default folder in the Reset node as well\n3) You can duplicate the Reset nodes and use them as saved shortcuts\n4) Check the Convert Timestamps function node if you want to see your dates in a different format. I just used the Javascript toISOString format.\n5) The Graph button can read any CSV file which have any number of values, but the first column always contains a timestamp column with javascript timestamp of the data point.",
+        "x": 230,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d185a45.2327a58",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "Init",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "change",
+        "payload": "/usr/src/node-red/uploadApp/uploads",
+        "payloadType": "str",
+        "x": 230,
+        "y": 160,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "a715f7a4.a398a8",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 1,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Refresh",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "refresh",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "refresh",
+        "topicType": "str",
+        "x": 220,
+        "y": 200,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "eb17c7ee.e61988",
+        "type": "ui_dropdown",
+        "z": "f6f2187d.f17ca8",
+        "name": "File Selector",
+        "label": "",
+        "tooltip": "",
+        "place": "Select a file",
+        "group": "160e81fb.f1c86e",
+        "order": 9,
+        "width": "5",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 1030,
+        "y": 200,
+        "wires": [
+            [
+                "be4830df.5775d"
+            ]
+        ]
+    },
+    {
+        "id": "dd88bd23.37cde",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Format data",
+        "func": "// format the data for the dropdown\nmsg.options = [];\nfor (var i=0; i<msg.payload.length; i++) {\n    // This is a file\n    let obj = {};\n    obj [msg.payload[i].name.replace(/^.*(\\\\|\\/|\\:)/, '')]=msg.payload[i].name;\n    msg.options.push(obj);\n}\nmsg.payload={};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 200,
+        "wires": [
+            [
+                "eb17c7ee.e61988"
+            ]
+        ]
+    },
+    {
+        "id": "638728aa.cd0b08",
+        "type": "ui_template",
+        "z": "f6f2187d.f17ca8",
+        "group": "160e81fb.f1c86e",
+        "name": "",
+        "order": 6,
+        "width": "18",
+        "height": "6",
+        "format": "<div ng-bind-html=\"msg.payload\" height=\"400\" style=\"height: 400px;\"><br/>\n</div>\n\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 1220,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d27e846.b31db8",
+        "type": "template",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<table width=\"100%\">\n    <tr><th>File Name</th><th>Size</th><th>Created</th><th>Changed</th></tr>\n    {{#payload}}\n        <tr>\n            <td><a href=\"/download?filename={{name}}\" target=\"blank\">{{fname}}</a></td>\n            <td>{{stat.size}}</td>\n            <td>{{stat.created}}</td>\n            <td>{{stat.changed}}</td>\n        </tr>\n    {{/payload}}\n</table>\n",
+        "output": "str",
+        "x": 1060,
+        "y": 260,
+        "wires": [
+            [
+                "638728aa.cd0b08"
+            ]
+        ]
+    },
+    {
+        "id": "3e094f82.15d6e",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Convert timestamps",
+        "func": "for (var i=0; i<msg.payload.length; i++) {\n    msg.payload[i].stat.created = msg.payload[i].stat.created.toISOString().slice(0, 19).replace('T', ' ');\n    msg.payload[i].stat.changed = msg.payload[i].stat.changed.toISOString().slice(0, 19).replace('T', ' ');\n    msg.payload[i].stat.accessed = msg.payload[i].stat.accessed.toISOString().slice(0, 19).replace('T', ' ');\n    msg.payload[i].stat.statusChanged = msg.payload[i].stat.statusChanged.toISOString().slice(0, 19).replace('T', ' ');\n    msg.payload[i].fname = msg.payload[i].name.replace(/^.*(\\\\|\\/|\\:)/, '');\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 860,
+        "y": 260,
+        "wires": [
+            [
+                "9d27e846.b31db8"
+            ]
+        ]
+    },
+    {
+        "id": "7b7e0d58.05e244",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 10,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Delete",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "delete",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 250,
+        "y": 360,
+        "wires": [
+            [
+                "8da8147a.999af8"
+            ]
+        ]
+    },
+    {
+        "id": "7d490dd1.8458b4",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Get filename",
+        "func": "// Get the filename from the flow context\nlet filename = flow.get(\"fileselected\");\n\n// check, if the filename is undefined that means it does not exist yet, nothing is selected yet\n// return: do not output anything\nif (filename===undefined) {\n    return;\n}\n\n// return the filename to the file-in node to delete\nmsg.filename = filename;\n\nif (msg.filename.replace(/^.*(\\\\|\\/|\\:)/, '')[0]!==\".\") {\n    // Only do this if this is a file, we don't delete folders\n    // and delete the context/selection as we are deleting the file as well\n    flow.set(\"fileselected\");\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 420,
+        "wires": [
+            [
+                "372ee262.fc94de"
+            ]
+        ]
+    },
+    {
+        "id": "372ee262.fc94de",
+        "type": "file",
+        "z": "f6f2187d.f17ca8",
+        "name": "Delete file",
+        "filename": "",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "delete",
+        "encoding": "none",
+        "x": 660,
+        "y": 420,
+        "wires": [
+            [
+                "993d7272.843ae",
+                "5219875b.c070d8"
+            ]
+        ]
+    },
+    {
+        "id": "aa8c482.93734b8",
+        "type": "http in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "url": "/download",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 260,
+        "y": 560,
+        "wires": [
+            [
+                "d969ba04.e24028"
+            ]
+        ]
+    },
+    {
+        "id": "d19cc7d8.646328",
+        "type": "http response",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1050,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d969ba04.e24028",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Get the file name",
+        "func": "msg.filename = msg.req.query.filename;\nmsg.contentdisposition = \"attachment; filename=\\\"\" + msg.req.query.filename.replace(/^.*(\\\\|\\/|\\:)/, '') + \"\\\"\";\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 560,
+        "wires": [
+            [
+                "e92381c3.c4cd2"
+            ]
+        ],
+        "outputLabels": [
+            "Folder selected"
+        ]
+    },
+    {
+        "id": "e92381c3.c4cd2",
+        "type": "file in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "filename": "",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 700,
+        "y": 560,
+        "wires": [
+            [
+                "99ff4953.d0d5c8"
+            ]
+        ]
+    },
+    {
+        "id": "99ff4953.d0d5c8",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "Set Headers",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "text/csv",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "headers.Content-Disposition",
+                "pt": "msg",
+                "to": "contentdisposition",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 870,
+        "y": 560,
+        "wires": [
+            [
+                "d19cc7d8.646328"
+            ]
+        ]
+    },
+    {
+        "id": "2519dd0d.54d6b2",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 11,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Graph",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "show_chart",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 210,
+        "y": 680,
+        "wires": [
+            [
+                "30f41c01.358a54"
+            ]
+        ]
+    },
+    {
+        "id": "30f41c01.358a54",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Get filename",
+        "func": "// Get the filename from the flow context\nlet filename = flow.get(\"fileselected\");\n\n// check, if the filename is undefined that means it does not exist yet, nothing is selected yet\n// return: do not output anything\nif (filename===undefined) {\n    return;\n}\n\n// return the filename to the file-in node to delete\nmsg.filename = filename;\n\nif (msg.filename.replace(/^.*(\\\\|\\/|\\:)/, '')[0]!==\".\") {\n    // Only do this if this is a file, we don't delete folders\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 680,
+        "wires": [
+            [
+                "0c030d56664c3dae"
+            ]
+        ]
+    },
+    {
+        "id": "4f4072b6.0c320c",
+        "type": "file in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "stream",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 560,
+        "y": 680,
+        "wires": [
+            [
+                "4d254665.d508e8"
+            ]
+        ]
+    },
+    {
+        "id": "4d254665.d508e8",
+        "type": "csv",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "I5",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": false,
+        "include_null_values": false,
+        "x": 710,
+        "y": 680,
+        "wires": [
+            [
+                "7dcec769.580718"
+            ]
+        ]
+    },
+    {
+        "id": "84810f0e.43f4e",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1130,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "7dcec769.580718",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Format data for chart",
+        "func": "var chart = [{\n    \"series\":[],\n    \"data\":[],\n    \"labels\":[msg.filename]\n}];\n\n\n/*\nvar pressure = [];\nvar out2 = [];\n\nfor (var i=0; i<msg.payload.length; i++) {\n    pressure.push({\"x\":msg.payload[i].timestamp, \"y\":msg.payload[i].pressure});\n    out2.push({\"x\":msg.payload[i].timestamp, \"y\":msg.payload[i].out2*200});\n\n}\nchart[0].data.push(pressure);\nchart[0].data.push(out2);\n*/\n\nlet columns = 0;\n\nfor(var series in msg.payload[0]) {\n    if(series!==\"timestamp\") {\n        chart[0].series.push(series);\n        chart[0].data.push([]);\n        columns++;\n    }\n}\n\n\nfor (var j=0; j<msg.payload.length; j++) {\n   for(var i=0;i<columns;i++) {\n       chart[0].data[i].push({\"x\":msg.payload[j].timestamp, \"y\":msg.payload[j][chart[0].series[i]]});\n   } \n}\n\n\n\n\nmsg.payload = chart;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 680,
+        "wires": [
+            [
+                "5022cb53.8adc44",
+                "84810f0e.43f4e"
+            ]
+        ]
+    },
+    {
+        "id": "5022cb53.8adc44",
+        "type": "ui_chart",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 12,
+        "width": "18",
+        "height": "6",
+        "label": "",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1120,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "554f0095.ac1b2",
+        "type": "ui_toast",
+        "z": "f6f2187d.f17ca8",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": false,
+        "outputs": 1,
+        "ok": "Yes",
+        "cancel": "No",
+        "raw": false,
+        "topic": "",
+        "name": "Confirmation",
+        "x": 630,
+        "y": 360,
+        "wires": [
+            [
+                "24df84fe.ebf45c"
+            ]
+        ]
+    },
+    {
+        "id": "8da8147a.999af8",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "Set message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Delete confirmation",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "Are you sure you want to delete this file?",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 360,
+        "wires": [
+            [
+                "554f0095.ac1b2"
+            ]
+        ]
+    },
+    {
+        "id": "24df84fe.ebf45c",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Yes",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 830,
+        "y": 360,
+        "wires": [
+            [
+                "7d490dd1.8458b4"
+            ]
+        ]
+    },
+    {
+        "id": "3d4e5e51.bdf952",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Folder handling",
+        "func": "let folder = context.get(\"folder\");\nif (folder===undefined) {\n    folder=\"/\";\n    context.set(\"folder\", folder);\n}\n\nlet hidden = context.get(\"hidden\");\nif (hidden===undefined) {\n    hidden=false;\n    context.set(\"hidden\", hidden);\n}\n\nif (msg.topic===\"up\") {\n    var the_arr = folder.split('/');\n    the_arr.pop();\n    folder=the_arr.join('/'); \n    context.set(\"folder\", folder);\n}\nif (msg.topic===\"change\") {\n    folder=msg.payload;    \n    context.set(\"folder\", folder);\n}\nif (msg.topic===\"hidden\") {\n    hidden=msg.payload;    \n    context.set(\"hidden\", hidden);\n}\n\nmsg.payload = {\"start\":folder, \"hidden\": hidden};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "993d7272.843ae",
+                "399ac341.7d43bc",
+                "5219875b.c070d8"
+            ]
+        ]
+    },
+    {
+        "id": "399ac341.7d43bc",
+        "type": "ui_text",
+        "z": "f6f2187d.f17ca8",
+        "group": "160e81fb.f1c86e",
+        "order": 4,
+        "width": "9",
+        "height": "1",
+        "name": "",
+        "label": "Folder:",
+        "format": "{{msg.payload.start}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 620,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "b40ea1d8.c700a",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 3,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Up",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "arrow_upwards",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "up",
+        "x": 230,
+        "y": 280,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "80940e39.5035b",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 8,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Open",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "folder_open",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 250,
+        "y": 480,
+        "wires": [
+            [
+                "8c1dfaac.979588"
+            ]
+        ]
+    },
+    {
+        "id": "8c1dfaac.979588",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Change folder",
+        "func": "// Get the filename from the flow context\nlet folderselected = flow.get(\"folderselected\");\n\n// check, if the filename is undefined that means it does not exist yet, nothing is selected yet\n// return: do not output anything\nif (folderselected===undefined) {\n    return;\n}\n\nmsg.topic = \"change\";\nmsg.payload = folderselected;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 460,
+        "y": 480,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "58414ec4.c716e",
+        "type": "ui_button",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "group": "160e81fb.f1c86e",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Reset",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "/usr/src/node-red/uploads",
+        "payloadType": "str",
+        "topic": "change",
+        "topicType": "str",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "37485c24.212054",
+        "type": "ui_dropdown",
+        "z": "f6f2187d.f17ca8",
+        "name": "Folder Selector",
+        "label": "",
+        "tooltip": "",
+        "place": "Select a folder",
+        "group": "160e81fb.f1c86e",
+        "order": 7,
+        "width": "5",
+        "height": "1",
+        "passthru": false,
+        "multiple": false,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 1040,
+        "y": 300,
+        "wires": [
+            [
+                "2875c79f.531558"
+            ]
+        ]
+    },
+    {
+        "id": "ebc234be.d53fe8",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "Format data",
+        "func": "// format the data for the dropdown\nmsg.options = [];\nfor (var i=0; i<msg.payload.length; i++) {\n    // This is a foler\n    let obj = {};\n    obj [\"[\"+msg.payload[i].name.replace(/^.*(\\\\|\\/|\\:)/, '')+\"]\"]=msg.payload[i].name;\n    msg.options.push(obj);\n}\nmsg.payload={};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 300,
+        "wires": [
+            [
+                "37485c24.212054"
+            ]
+        ]
+    },
+    {
+        "id": "be4830df.5775d",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "Save selection",
+        "rules": [
+            {
+                "t": "set",
+                "p": "fileselected",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1240,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2875c79f.531558",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "Save selection",
+        "rules": [
+            {
+                "t": "set",
+                "p": "folderselected",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1240,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "993d7272.843ae",
+        "type": "fs-file-lister",
+        "z": "f6f2187d.f17ca8",
+        "name": "Files",
+        "start": "/usr/src/node-red/uploadApp/uploads",
+        "pattern": "*.*",
+        "folders": "*",
+        "hidden": false,
+        "lstype": "files",
+        "path": true,
+        "single": true,
+        "depth": 0,
+        "stat": true,
+        "showWarnings": false,
+        "x": 630,
+        "y": 200,
+        "wires": [
+            [
+                "dd88bd23.37cde",
+                "3e094f82.15d6e"
+            ]
+        ]
+    },
+    {
+        "id": "5219875b.c070d8",
+        "type": "fs-file-lister",
+        "z": "f6f2187d.f17ca8",
+        "name": "Folders",
+        "start": "/usr/src/node-red/uploadApp/uploads",
+        "pattern": "*.*",
+        "folders": "*",
+        "hidden": false,
+        "lstype": "directories",
+        "path": true,
+        "single": true,
+        "depth": 0,
+        "stat": true,
+        "showWarnings": false,
+        "x": 640,
+        "y": 300,
+        "wires": [
+            [
+                "ebc234be.d53fe8"
+            ]
+        ]
+    },
+    {
+        "id": "928e60a7.994be",
+        "type": "ui_switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "label": "Hidden",
+        "tooltip": "Show hidden files or not",
+        "group": "160e81fb.f1c86e",
+        "order": 5,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "decouple": "false",
+        "topic": "hidden",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "check_box",
+        "oncolor": "#000000",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "check_box_outline_blank",
+        "offcolor": "#000000",
+        "animate": true,
+        "className": "",
+        "x": 220,
+        "y": 320,
+        "wires": [
+            [
+                "3d4e5e51.bdf952"
+            ]
+        ]
+    },
+    {
+        "id": "0c030d56664c3dae",
+        "type": "file in",
+        "z": "f6f2187d.f17ca8",
+        "name": "read a spreadsheet file as binary buffer",
+        "filename": "filename",
+        "filenameType": "msg",
+        "format": "",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 350,
+        "y": 800,
+        "wires": [
+            [
+                "3390fb0c368b34cc"
+            ]
+        ]
+    },
+    {
+        "id": "3390fb0c368b34cc",
+        "type": "book",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "raw": false,
+        "x": 590,
+        "y": 800,
+        "wires": [
+            [
+                "ed8ba85898408e5a"
+            ]
+        ]
+    },
+    {
+        "id": "ed8ba85898408e5a",
+        "type": "sheet",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "sheetName": "Factors by Category",
+        "x": 370,
+        "y": 860,
+        "wires": [
+            [
+                "5dba76725ce1f7e5"
+            ]
+        ]
+    },
+    {
+        "id": "5dba76725ce1f7e5",
+        "type": "sheet-to-json",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "raw": "true",
+        "range": "I5:I8042",
+        "header": "default",
+        "blankrows": false,
+        "x": 530,
+        "y": 860,
+        "wires": [
+            [
+                "4a9253a09030d61b"
+            ]
+        ]
+    },
+    {
+        "id": "02f0a8e5e702a880",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "++",
+        "func": "if ((msg.i += 1) < msg.items.length) return msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 920,
+        "wires": [
+            [
+                "4a9253a09030d61b"
+            ]
+        ]
+    },
+    {
+        "id": "4a9253a09030d61b",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "for each item",
+        "func": "if( msg.i     == undefined ) msg.i = 0;\nif( msg.items == undefined ) msg.items = msg.payload;\n\nmsg.payload = msg.items[ msg.i ];\n\nmsg.index = msg.i\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 812,
+        "y": 832,
+        "wires": [
+            [
+                "02f0a8e5e702a880",
+                "72b930ca59e1e18b",
+                "5b322289f285af42"
+            ]
+        ]
+    },
+    {
+        "id": "72b930ca59e1e18b",
+        "type": "influxdb out",
+        "z": "f6f2187d.f17ca8",
+        "influxdb": "6d9d5486843416a5",
+        "name": "",
+        "measurement": "convesrion",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "TalTech",
+        "bucket": "test",
+        "x": 1110,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "5b322289f285af42",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 1090,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "160e81fb.f1c86e",
+        "type": "ui_group",
+        "name": "File Browser",
+        "tab": "b63d1f91.68095",
+        "order": 1,
+        "disp": true,
+        "width": "18",
+        "collapse": false
+    },
+    {
+        "id": "6d9d5486843416a5",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": "8086",
+        "protocol": "http",
+        "database": "database",
+        "name": "influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://nig-stack_influxdb_1:8086",
+        "rejectUnauthorized": true,
+        "credentials": {}
+    },
+    {
+        "id": "b63d1f91.68095",
+        "type": "ui_tab",
+        "name": "Files",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]

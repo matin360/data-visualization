@@ -1,5 +1,7 @@
 # data-visualization
-- refer to [instructions](https://github.com/Onunda/nig-stack) to set stack in docker
+- use [compose file](./docker/docker-compose.yml) to set stack in docker
+- run `docker-compose up -d`
+- refer to [this](https://github.com/Onunda/nig-stack)
 ## Docs
 
 - [Grafana docs](https://grafana.com/docs/)
@@ -37,10 +39,19 @@
 - import the given [flow](./flows/flow2.json)
 ![](./img/node-red-flow2.png)
 
-#### File Uploader (uploads into local folder)
+#### File Browser 
+
+- import the given [flow](./flows/flows-file-browser.json)
+- refer to [this](https://flows.nodered.org/flow/44bc7ad491aacb4253dd8a5f757b5407) to get more info about this flow.
+- run `docker cp local/path/to/app [container_id]:/usr/src/node-red/` to copy app into container
+- run `docker exec -it -u root node-red bash` to open bash with root priviliges
+
+##### File Uploader Set Up (uploads into local folder)
 
 - `cd uploadApp`
 - make sure you have nodejs installed as well as npm/yarn
 - `yarn install`
 - `yarn start` to build the project and run the node server
-- `yarn dev` (2nd terminal) to run the frontend
+- `yarn host` (2nd terminal) to run the frontend with exposed host port
+- the app is available at `http://localhost:5173/`
+- the app server is available at `http://localhost:3001/`
