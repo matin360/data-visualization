@@ -1,0 +1,39 @@
+version: "3.3"
+
+services:
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    environment:
+      - TZ=Europe/Tallinn
+    ports:
+      - ${NODERED_PORT}:1880
+      - 5173:5173
+      - 3001:3001
+    volumes:
+      - nodered-storage:/home/user/node_red_data:rw
+      
+  influxdb:
+    image: influxdb:latest
+    volumes:
+      - influxdb-storage:/var/lib/influxdb2:rw
+    env_file:
+      - .env
+    entrypoint: ["./entrypoint.sh"]
+    restart: on-failure:10
+    ports:
+      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
+
+  grafana:
+    image: grafana/grafana-oss:8.4.3
+    volumes:
+      - grafana-storage:/var/lib/grafana:rw
+    depends_on:
+      - influxdb
+    ports:
+      - ${GRAFANA_PORT}:3000
+
+volumes:
+  nodered-storage:
+  grafana-storage:
+  influxdb-storage:
