@@ -22,6 +22,11 @@ export default function App() {
         "content-type": "multipart/form-data",
         "Access-Control-Allow-Origin": "*"
       },
+    }).then((response) => {
+      if(response)
+        alert("File was submitted successfully!");
+    }, (error) => {
+      console.log(error);
     });
   }
 
